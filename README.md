@@ -88,3 +88,35 @@ root.render({listItems});
   -   컴포넌트는 key 를 보고 갱신되고 재사용된다. index를 사용했다면 항목의 순서가 바뀌었을 경우 key 또한 바뀌었을 거고 이는 state를 엉망으로 만들거나 원하지 않는 방식으로 컴포넌트를 바꿀 수 있다. (https://ko.legacy.reactjs.org/docs/reconciliation.html#recursing-on-children)
 - key는 형제 사이에서만 고유한 값이어야 한다.
   - Key는 배열 안에서 형제 사이에서 고유해야 하고 전체 범위에서 고유할 필요는 없다. 두 개의 다른 배열을 만들 때 동일한 key를 사용할 수 있다. (https://ko.legacy.reactjs.org/docs/lists-and-keys.html)
+
+## useEffect
+- 컴포넌트가 렌더링 될 때 특정 작업을 실행할 수 있도록 하는 Hook이다.
+- 렌더링 이후 실행할 함수(리액트는 이 함수를 기억 했다가 DOM 업데이트 후 불러낸다.)
+```JavaScript
+  // 컴포넌트가 렌더링 될 때마다 실행됨
+  useEffect(() => {
+    console.log("EFFECT RUNNING");
+  });
+  
+  // 맨 처음 렌더링때 실행하고 의존성이 변경되면 실행된다. (data)
+  useEffect(() => {
+    console.log("EFFECT RUNNING");
+  }, [data]);
+```
+## Clean-up 함수
+- clean-up 함수는 useEffect Hook 내에서 return되는 함수이다.
+- 컴포넌트가 사라질 때(unmount 시점), 특정 값이 변경되기 직전(deps update 직전)에 실행할 작업을 지정할 수 있다.
+- 클린업 함수는 첫번째 렌더링때는 실행되지 않는다.
+- 클린업 함수가 먼저 실행되고 useEffect 함수가 실행된다.
+```JavaScript
+  // 컴포넌트가 렌더링 될 때마다 실행됨
+  
+  // 맨 처음 렌더링때 실행하고 의존성이 변경되면 실행된다. (data)
+  useEffect(() => {
+    console.log("EFFECT RUNNING");
+
+    return () => {
+      console.log("클린업 함수");
+    };
+  }, [data]);
+```
