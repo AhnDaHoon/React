@@ -103,7 +103,7 @@ root.render({listItems});
     console.log("EFFECT RUNNING");
   }, [data]);
 ```
-## Clean-up 함수
+### Clean-up 함수
 - clean-up 함수는 useEffect Hook 내에서 return되는 함수이다.
 - 컴포넌트가 사라질 때(unmount 시점), 특정 값이 변경되기 직전(deps update 직전)에 실행할 작업을 지정할 수 있다.
 - 클린업 함수는 첫번째 렌더링때는 실행되지 않는다.
@@ -119,4 +119,49 @@ root.render({listItems});
       console.log("클린업 함수");
     };
   }, [data]);
+```
+
+## useReducer
+- useState를 대체할 수 있는 함수이다.
+- 좀 더 복잡한 상태 관리가 필요한 경우 reducer를 사용할 수 있다.
+- reducer는 이전 상태와 Action을 합쳐, 새로운 state를 만드는 조작을 말한다.
+```JavaScript
+  const [state, dispatchFn] = useReducer(reducerFn, initialState, initFn);
+  // useReducer는 항상 두 개의 값이 있는 배열을 반환한다. [state, dispatchFn]
+
+  // state: 최신 스냅샷
+
+  // dispatchFn: 스냅샷을 업데이트 할 수 있게 해주는 함수
+  // 첫번째 인자인 reducer 함수를 실행시킨다.
+
+  // reducerFn: 컴포넌트 외부에서 state를 업데이트 하는 함수
+  // 현재state, action 객체를 인자로 받아, 기존의 state를 대체하여 새로운 state를 반환하는 함수
+
+  // initialState: 초기 state
+
+  // initFn: 초기 함수 (초기 state를 조금 지연해서 생성하기 위해 사용)
+
+const emailReducer = (state, action) => {
+  if(action.type === 'USER_INPUT'){
+    
+    // 컴포넌트가 처음 렌더링 되고 email input으로 aa@naver.com을 입력했을때
+    console.log(state) // {value: '', isValid: false}
+    console.log(action) // {type: 'USER_INPUT', val: 'aa@naver.com'}
+    return {value: action.val, isValid: action.val.includes('@')}
+  }
+  if(action.type === 'INPUT_BLUR'){
+    return {value: state.val, isValid: state.value.includes('@')}
+  }
+  return {value: '', isValid: false}
+}
+
+const Login = (props) => {
+   // ..... 나머지 코드 생략
+  const [emailState, dispatchEmail] = useReducer(emailReducer, {value:'', isValid: false});
+
+  const emailChangeHandler = (event) => {
+    dispatchEmail({type:'USER_INPUT', val:event.target.value}); // dispatchFn를 사용하면 emailReducer에서 action를 이용해 업데이트한 데이터들을 받을 수 있다.
+  };
+  // ..... 나머지 코드 생략
+}
 ```
