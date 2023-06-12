@@ -165,3 +165,12 @@ const Login = (props) => {
   // ..... 나머지 코드 생략
 }
 ```
+
+## useState() vs useReducer()
+useState()와 useReducer()는 언제 사용하는 것이 좋을까?
+- useState()
+  - 개별 state, 간단한 state에 사용하기가 적합하다.
+  - state 업데이트가 쉽고 몇 종류가 안 되는 경우에 적합하다.
+- useReducer()
+  - state가 객체거나 복잡한 state가 있을 때 사용하기가 적합하다.
+  - 연관된 state로 구성된 state 관련 데이터를 다룰 때 적합하다.
