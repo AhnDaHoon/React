@@ -143,7 +143,7 @@ root.render({listItems});
 
 const emailReducer = (state, action) => {
   if(action.type === 'USER_INPUT'){
-    
+
     // 컴포넌트가 처음 렌더링 되고 email input으로 aa@naver.com을 입력했을때
     console.log(state) // {value: '', isValid: false}
     console.log(action) // {type: 'USER_INPUT', val: 'aa@naver.com'}
