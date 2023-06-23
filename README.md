@@ -181,3 +181,54 @@ useState()와 useReducer()는 언제 사용하는 것이 좋을까?
    1. useEffect(), if문 for문 등등
    2. 리액트 훅은 함수의 최상위 수준에서 직접 호출되어야 한다.
 3. useEffect()함수에서 사용하는 데이터들은 전부 다 의존성 배열로 추가해줘야 한다.
+
+## useMemo()
+- https://ui.toast.com/weekly-pick/ko_20190731
+
+### useCallback()
+useMemo를 사용하면 Primitive Values일 때는 괜찮지만 Reference을 쓸 때 문제가 발생한다. 
+ ```JavaScript
+let a = 1
+let b = 1
+a === b // true 
+// 위와 같이 기본값들을 비교했을 때 true가 나오지만
+
+let obj1 = {}
+let obj2 = {}
+obj1 === obj2 // Reference을 비교하면 false가 나오기 때문이다.
+
+```
+- 위에 코드와 같이 이전 Reference와 현재 Reference를 비교하면 메모리 주소가 다르기 때문에 false가 나온다 그래서 useCallback()를 이용하여 함수를 재사용 해야한다.
+- useMemo()는 이전 값과 현재 값을 비교해 같으면 함수를 호출하지 않는다, useCallback()은 특정 함수를 새로 만들지 않고 재사용하고 싶을때 사용한다.
+- useCallback()에서 특정 값을 가져와 사용할 때는 의존성에 넣어줘야 한다.
+ ```JavaScript
+function App() {
+  const [showParagraph, setShowParagraph] = useState(false);
+  const [allowToggle, setAllowToggle] = useState(false);
+
+  const toggleParagraphHandler = useCallback(() => {
+   // 지금 이 함수를 보면 위에서 정의한 allowToggle state를 가져와 사용하는걸로 보인다.
+   // 그러나 useCallback()함수는 값을 의존성으로 넣어주지 않으면 위에서 정의된 변수를 가져오지 않고
+   // 상수를 만들기 때문에 비어있는 상수가 된다. (같은 변수명이지만 서로 다르다.)
+   // 만약 위에서 정의한 state allowToggle를 사용하려면 의존성을 추가해줘야 한다.(1.1)
+    if (allowToggle) {   
+      setShowParagraph((prevShowParagraph) => !prevShowParagraph);
+    }
+  }, [allowToggle]); // (1.1) allowToggle 의존성 추가
+
+  const allowToggleHandler = () => {
+    setAllowToggle(true);
+  };
+
+  return (
+    <div className="app">
+      <h1>Hi there!</h1>
+      <DemoOutput show={showParagraph} />
+      <Button onClick={allowToggleHandler}>Allow Toggling</Button>
+      <Button onClick={toggleParagraphHandler}>Show Paragraph</Button>
+    </div>
+  );
+}
+```
+
+
