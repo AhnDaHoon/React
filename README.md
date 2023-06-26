@@ -89,7 +89,7 @@ root.render({listItems});
 - key는 형제 사이에서만 고유한 값이어야 한다.
   - Key는 배열 안에서 형제 사이에서 고유해야 하고 전체 범위에서 고유할 필요는 없다. 두 개의 다른 배열을 만들 때 동일한 key를 사용할 수 있다. (https://ko.legacy.reactjs.org/docs/lists-and-keys.html)
 
-## useEffect
+## useEffect()
 - 컴포넌트가 렌더링 될 때 특정 작업을 실행할 수 있도록 하는 Hook이다.
 - 렌더링 이후 실행할 함수(리액트는 이 함수를 기억 했다가 DOM 업데이트 후 불러낸다.)
 ```JavaScript
@@ -105,7 +105,7 @@ root.render({listItems});
 ```
 ### Clean-up 함수
 - clean-up 함수는 useEffect Hook 내에서 return되는 함수이다.
-- 컴포넌트가 사라질 때(unmount 시점), 특정 값이 변경되기 직전(deps update 직전)에 실행할 작업을 지정할 수 있다.
+- 컴포넌트가 사라질 때(unmount 시점), 특정 값이 변경되기 직전(update 직전)에 실행할 작업을 지정할 수 있다.
 - 클린업 함수는 첫번째 렌더링때는 실행되지 않는다.
 - 클린업 함수가 먼저 실행되고 useEffect 함수가 실행된다.
 ```JavaScript
@@ -121,7 +121,7 @@ root.render({listItems});
   }, [data]);
 ```
 
-## useReducer
+## useReducer()
 - useState를 대체할 수 있는 함수이다.
 - 좀 더 복잡한 상태 관리가 필요한 경우 reducer를 사용할 수 있다.
 - reducer는 이전 상태와 Action을 합쳐, 새로운 state를 만드는 조작을 말한다.
@@ -184,7 +184,64 @@ useState()와 useReducer()는 언제 사용하는 것이 좋을까?
 
 ## useMemo()
 - https://ui.toast.com/weekly-pick/ko_20190731
+- useMemo()는 컴포넌트를 재사용할 때도 쓰이지만 데이터를 재사용할 때도 쓰인다.
+  - 정렬과 같이 자주 쓰이면 성능이 느려지는 데이터에 쓰면 성능개선 효과를 볼 수 있다.
+ ```JavaScript
+function App() {
+  const [showParagraph, setShowParagraph] = useState(false);
+  const [allowToggle, setAllowToggle] = useState(false);
 
+  const toggleParagraphHandler = useCallback(() => {
+    if (allowToggle) {
+      setShowParagraph((prevShowParagraph) => !prevShowParagraph);
+    }
+  }, [allowToggle]);
+
+  const allowToggleHandler = () => {
+    setAllowToggle(true);
+  };
+
+  // 의존성에 빈배열을 넣어서 처음 렌더링 될때만 초기화 시킨다.
+  const items = useMemo(() => {
+    return [5, 1, 6, 7, 8, 2, 3];
+  }, []);
+
+  return (
+    <div className="app">
+      <h1>Hi there!</h1>
+      <DemoOutput show={showParagraph} items={items} />
+      <Button onClick={allowToggleHandler}>Allow Toggling</Button>
+      <Button onClick={toggleParagraphHandler}>Show Paragraph</Button>
+    </div>
+  );
+}
+
+const DemoOutput = (props) => {
+  const { items } = props;
+
+  /*
+    DemoOutput은 showParagraph가 바뀔 때마다 sortedList도 바뀌어서 sort 함수를 자주 호출하지만
+    useMemo()를 이용해 리스트의 값이 바뀌지 않으면 sort를 사용해 데이터를 다시 정렬하지 않고 기존에 사용했던 
+    데이터를 재사용한다.
+  */
+
+  const sortedList = useMemo(() => {
+    console.log("list!");
+    return items.sort((a, b) => a - b);
+  }, [items]);
+  console.log("demo");
+  return (
+    <Fragment>
+      <p>{props.show ? "This is new!" : ""}</p>;
+      <ul>
+        {sortedList.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </Fragment>
+  );
+};
+```
 ### useCallback()
 useMemo를 사용하면 Primitive Values일 때는 괜찮지만 Reference을 쓸 때 문제가 발생한다. 
  ```JavaScript
@@ -230,5 +287,8 @@ function App() {
   );
 }
 ```
+
+## 스케줄링 (!중요)
+https://velog.io/@kim98111/State-Update
 
 
