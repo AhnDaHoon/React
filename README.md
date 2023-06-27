@@ -266,7 +266,7 @@ function App() {
   const toggleParagraphHandler = useCallback(() => {
    // 지금 이 함수를 보면 위에서 정의한 allowToggle state를 가져와 사용하는걸로 보인다.
    // 그러나 useCallback()함수는 값을 의존성으로 넣어주지 않으면 위에서 정의된 변수를 가져오지 않고
-   // 상수를 만들기 때문에 비어있는 상수가 된다. (같은 변수명이지만 서로 다르다.)
+   // 상수를 만들기 때문에 비어있는 상수가 된다. (같은 변수명이지만 서로 다르다, javascript 스코프의 개념이다.)
    // 만약 위에서 정의한 state allowToggle를 사용하려면 의존성을 추가해줘야 한다.(1.1)
     if (allowToggle) {   
       setShowParagraph((prevShowParagraph) => !prevShowParagraph);
